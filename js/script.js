@@ -1,67 +1,38 @@
 var playerData;
 
-
 $(document).ready(function() {
     getData();
 });
 
 
-
-
-function getData()  {
-	$.getJSON("js/baseballcard.json", function(data, error) {
-		playerData = data;
-		drawStuff();
+function getData() {
+	$.getJSON("js/baseballcard.json", function(data) {
+		playerData = data;	
+		drawChart();	
 	});
 }
 
 
-function drawStuff() {
-	
-	//The playerData variable contains our data.
-	//I'll create variables here to illustrate how each attibute is accessed
-	//I could also just do this inline below, but breaking it out here makes things a little clearer I think.
-
-	var playerName = playerData.name;
-	var playerTeam = playerData.club;
-
-	//Creating a variable for our players stats, which is an array, or *list* of seasons.
-	var playerStats = playerData.stats;
-
-	//To access a season in our array, we'll identify it by its index number, or order in the array
-	//For example, the first season would be playerStats[0] (Remember, sequences are zero-based in JavaScript)
-	//But in order to access the last season, we need to know the index number of that season in the array.
-	//We could count just look at the JSON and count them, sure. But that's work. And we're laaaazy.
-	//So we'll do it with code:
-
-	var lastSeasonIndex = playerStats.length -1;
-
-	//.length tells us how many items are in our list. And since index values are zero based...
-	//... we're really looking for one less than the total number of items.
-	//So the most recent season is this:
-
-	var lastSeasonStats = playerData.stats[lastSeasonIndex];
-
-	var lastSeasonHomeRuns = lastSeasonStats.HR;
-	var lastSeasonYear = lastSeasonStats.year;
-	var lastSeasonTeam = lastSeasonStats.club;
-
-	//All that's left to do is write it to our page.
-	$(".chart").append("<h1>"+playerName+"</h1>");
-	$(".chart").append("<h3>"+playerTeam+"</h3>");
-	$(".chart").append("<p>In "+lastSeasonYear+", "+playerName+" hit "+lastSeasonHomeRuns+" home runs for the "+lastSeasonTeam);
+function drawChart() {
 
 
-	//Me: Cool, right?
-	//You: Yep, pretty cool.
+	$(".player-name").html(playerData.name);
 
+	// Our bars now consist of three elements:
+	// The date, the bar and a total
+	// To hold them all together, we group them inside of a div: .bar-container
+	// .col-md-12 is a class from the Bootstrap library which stretched the container to the full width of the page
+	// check the style.css file to see how we get the elements inside to arrange relative to one another
 
-	// $.each(playerData.stats, function(i, item) {
-	// 	$(".chart").append("<div class='avg'>"+item.AVG+"</div>");
-	// });
+	$.each(playerData.stats, function(i, item) {
+		var width = item.HR * 10;
+		$(".chart").append(
+			"<div class='col-md-12 bar-container'>"+
+				"<div class='year'>"+item.year+"</div>"+
+				"<div class='bar' style='width: "+width+"px'></div>"+
+				"<div class='total'>"+item.HR+"</div>"+
+			"</div>"
+		);
+	});
 
 }
-
-
-
-
